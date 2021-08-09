@@ -9,7 +9,7 @@ version 0.5 du 06/08/2021
 
 Le temps de cycle pris par ce module, aussi bien à 9600 bauds qu'à 250000 bauds est de 0.12 ms environ
 
-occupation    RAM 168 bytes     Flash 3888 bytes
+ occupation mémoire    RAM 218 bytes 2.7%     Flash 4928 bytes 1,9%
 
 Développé avec un MÉGA2560 REV3
 
@@ -42,7 +42,7 @@ Dans la boucle Setup : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisec
 
 ## Lancement du programme ##
 
-xTempsCycle(sSerialPrint) dans la boucle Loop
+Lancement du programme dans la boucle Loop xTempsCycle(sSerialPrint)
 
 la surveillance est lancée et le paramètre sSerialPrint à true imprime le résultat sur le terminal
 
@@ -54,3 +54,5 @@ cyc_CharLCD1[]   Première ligne de l'afficheur LCD  avec le temps moyen et le t
 cyc_CharLCD2[]   Seconde ligne de l'afficheur LCD  avec le nombre de cycle supérieur aux seuils definis
 
 cyc_newLCD       Bool prévenant d'un nouvel affichage. Il est à reseter par l'utilisateur.
+
+exemple :  LCD1 "m  0.02  M  0.12"   LCD2 ">     0 >>     0"
