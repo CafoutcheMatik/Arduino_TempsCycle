@@ -23,11 +23,10 @@
 *  cyc_intervallePrint = fréquence d'affichage (5 000 = 5 sec)
 *  cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5.00 = 5 ms)
 *  cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10.00 = 10 ms)
-*  exemple : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisecondes
+*  Dans la boucle Setup : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisecondes
 *
-*  Lancement du programme xTempsCycle(sSerialPrint)
-*  la surveillance est lancée 
-*  le paramètre sSerialPrint à true imprime le résultat sur le terminal
+*  Lancement du programme dans la boucle Loop xTempsCycle(sSerialPrint)
+*  la surveillance est lancée et le paramètre sSerialPrint à true imprime le résultat sur le terminal
 *  
 *  Variables disponibles
 *  cyc_CharLCD1[]   Première ligne de l'afficheur LCD  avec le temps moyen et le temsp max
