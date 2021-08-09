@@ -5,37 +5,48 @@
 *  hervé CHUTEAU pour le Bistromatik
 *  version 0.5 du 06/08/2021
 *
-*  Le temps de cycle pris par ce module, aussi bien à 9600 bauds qu'à 250000 bauds est de 0.12 ms environ
-*  occupation    RAM 168 bytes     Flash 3888 bytes
+*  Le temps de cycle pris par ce module, aussi bien à 9600 bauds qu'à 250000 bauds,
+*  est au max de 0.12 ms environ
+*  occupation mémoire    RAM 218 bytes 2.7%     Flash 4928 bytes 1,9%
 *  Développé avec un MÉGA2560 REV3
 *  Développé sous Visual Studio Code  1.57.1 et PlatformIO Core 5.1.1 Home 3.3.4
 *  
-*  Affichage typique 
+*  Affichage typique sur le terminal
 *  _ temps moyen
 *  _ temps max
 *  _ nombre de cycle avec un temps supérieur au seuil 1 (ici 5 ms)
 *  _ nombre de cycle avec un temps supérieur au seuil 2 (ici 10 ms)
 *
-*  exemple "Temps de cycle en ms   moyen 4.02   max 4.03   >5.00 0   >10.00 0"
+*  exemple "Temps de cycle en ms   moyen 0.02   max 0.12   >5.00 0   >10.00 0"
 *  
 *  Paramètrage 
-*  cyc_intervallePrint = fréquence d'affichage (5 000 000 = 5 sec)
-*  cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5 000 = 5 ms)
-*  cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10 000 = 10 ms)
+*  cyc_intervallePrint = fréquence d'affichage (5 000 = 5 sec)
+*  cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5.00 = 5 ms)
+*  cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10.00 = 10 ms)
+*  exemple : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisecondes
+*
+*  Lancement du programme xTempsCycle(sSerialPrint)
+*  la surveillance est lancée 
+*  le paramètre sSerialPrint à true imprime le résultat sur le terminal
+*  
+*  Variables disponibles
+*  cyc_CharLCD1[]   Première ligne de l'afficheur LCD  avec le temps moyen et le temsp max
+*  cyc_CharLCD2[]   Seconde ligne de l'afficheur LCD  avec le nombre de cycle supérieur aux seuils definis
+*  cyc_newLCD       Bool prévenant d'un nouvel affichage. Il est à reseter par l'utilisateur.
+*  exemple :  LCD1 "m  0.02  M  0.12"   LCD2 ">     0 >>     0"
 */
+// P A R A M E T R E S
 // Fréquence d'affichage
 unsigned long cyc_intervallePrint = 5000000ul; // 5 000 000 = 5 sec
 // surveillance des temps de cycle long
 unsigned long cyc_seuil1 = 5000ul;	// Temps seuil 1 en μs
 unsigned long cyc_seuil2 = 10000ul; // Temps seuil 2 en μs
 //
-//
-//
 //   Déclarations
 //
 unsigned long cyc_micros, cyc_memMicros;
 unsigned long cyc_dureeCycle; // calcul du temps de cycle actuel
-
+//
 unsigned long cyc_compteur, cyc_compteurPrint; // nombre de tour programme
 unsigned long cyc_cumulDuree, cyc_cumulDureePrint;
 unsigned long cyc_max, cyc_maxPrint;
@@ -60,8 +71,8 @@ int cyc_IndexCharSerial, cyc_IndexAux, cyc_LenChaine;
 bool cyc_SerialPrint = false;
 //
 char cyc_CharChaine[NB_CHAR_CHAINE];
-char cyc_CharLCD1[NB_CHAR_LCD+1];
-char cyc_CharLCD2[NB_CHAR_LCD+1];
+char cyc_CharLCD1[NB_CHAR_LCD + 1];
+char cyc_CharLCD2[NB_CHAR_LCD + 1];
 bool cyc_newLCD;
 char cyc_CharAux[NB_CHAR_AUX];
 char cyc_CharSerial[NB_CHAR_SERIAL + 1];
@@ -70,11 +81,9 @@ const unsigned long cyc_limite = cyc_seuil_LONG - cyc_intervallePrint - 10;
 // déclaration des procédures internes
 void xTempsCycle_concat_char(char *spCharChaine, unsigned int sCharSize, char *spCharAux);
 void xTempsCycle_concat_const(char *spCharChaine, unsigned int sCharSize, const char *spCharAux);
-
 //
-
-/* *****************************
-*    T E M P S   C Y C L E    */
+/* ******************************************************
+*    P A R A M E T R A G E    T E M P S   C Y C L E    */
 void xTempsCycleParam(const float sIntervallePrint, const float sSeuil1, const float sSeuil2)
 {
 	cyc_intervallePrint = sIntervallePrint * 1000.00; // 5 000 000 = 5 sec
@@ -89,7 +98,6 @@ void xTempsCycleParam(const float sIntervallePrint, const float sSeuil1, const f
 	}
 	cyc_seuil2 = sSeuil2 * 1000.00; // Temps seuil 2 en μs
 }
-
 /* *****************************
 *    T E M P S   C Y C L E    */
 void xTempsCycle(bool sSerialPrint)
@@ -237,7 +245,7 @@ void xTempsCycle(bool sSerialPrint)
 			cyc_printTour++;
 			break;
 		case 18:
-			xTempsCycle_concat_const(cyc_CharChaine, sizeof(cyc_CharChaine), PSTR("   >")); //seuil2
+			xTempsCycle_concat_const(cyc_CharChaine, sizeof(cyc_CharChaine), PSTR("   >>")); //seuil2
 			//
 			cyc_printTour++;
 			break;
@@ -274,7 +282,7 @@ void xTempsCycle(bool sSerialPrint)
 		case 25:
 			if (cyc_moyenMs < 999.99)
 			{
-				dtostrf(cyc_moyenMs, 6, 2, cyc_CharAux); //moyen    L C D 
+				dtostrf(cyc_moyenMs, 6, 2, cyc_CharAux); //moyen    L C D
 			}
 			else
 			{
@@ -285,20 +293,20 @@ void xTempsCycle(bool sSerialPrint)
 			cyc_printTour++;
 			break;
 		case 26:
-			xTempsCycle_concat_const(cyc_CharLCD1,sizeof(cyc_CharLCD1), PSTR("  M")); //max    L C D
+			xTempsCycle_concat_const(cyc_CharLCD1, sizeof(cyc_CharLCD1), PSTR("  M")); //max    L C D
 			//
 			cyc_printTour++;
 			break;
 		case 27:
 			if (cyc_moyenMs < 999.99)
 			{
-				dtostrf(cyc_maxMs, 6, 2, cyc_CharAux); //max    L C D 
+				dtostrf(cyc_maxMs, 6, 2, cyc_CharAux); //max    L C D
 			}
 			else
 			{
 				strcpy_P(cyc_CharAux, PSTR("999.99"));
 			}
-			xTempsCycle_concat_char(cyc_CharLCD1, sizeof(cyc_CharLCD1), cyc_CharAux); //max    L C D 
+			xTempsCycle_concat_char(cyc_CharLCD1, sizeof(cyc_CharLCD1), cyc_CharAux); //max    L C D
 			//
 			cyc_printTour++;
 			break;
@@ -341,7 +349,7 @@ void xTempsCycle(bool sSerialPrint)
 			cyc_printTour++;
 			break;
 		case 32:
-			xTempsCycle_concat_const(cyc_CharLCD2, sizeof(cyc_CharLCD2),PSTR(" >>  ")); //seuil2    L C D
+			xTempsCycle_concat_const(cyc_CharLCD2, sizeof(cyc_CharLCD2), PSTR(" >>  ")); //seuil2    L C D
 			//
 			cyc_printTour++;
 			break;
@@ -375,6 +383,7 @@ void xTempsCycle(bool sSerialPrint)
 			break;
 		case 35:
 			xTempsCycle_concat_char(cyc_CharLCD2, sizeof(cyc_CharLCD2), cyc_CharAux); // Seuil 2    L C D
+			cyc_newLCD = true;
 			//
 			cyc_printTour++;
 			break;
@@ -429,7 +438,6 @@ void xTempsCycle(bool sSerialPrint)
 			break;
 		}
 	}
-
 	//
 	if (cyc_micros > cyc_limite)
 	{
@@ -443,7 +451,7 @@ void xTempsCycle(bool sSerialPrint)
 /* ************************************
 *      C O N C A T E N A T I O N     
 *  fait une concaténation de char array
-* en vérifiant le débordement
+*  en vérifiant le débordement
 *
 */
 void xTempsCycle_concat_char(char *spCharChaine, unsigned int sCharSize, char *spCharAux)
