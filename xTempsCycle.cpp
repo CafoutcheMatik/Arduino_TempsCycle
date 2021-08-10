@@ -21,6 +21,8 @@
 *  
 *  Paramètrage 
 *  cyc_intervallePrint = fréquence d'affichage (5 000 = 5 sec)
+*          Ne pas choisir une fréquence trop rapide pour ne pas saturer l'affichage
+*          et être au minimum à un centaine de fois le temps cycle moyen    
 *  cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5.00 = 5 ms)
 *  cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10.00 = 10 ms)
 *  Dans la boucle Setup : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisecondes
