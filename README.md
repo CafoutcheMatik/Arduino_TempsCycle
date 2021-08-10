@@ -33,6 +33,9 @@ exemple "Temps de cycle en ms   moyen 4.02   max 4.03   >5.00 0   >10.00 0"
 
 cyc_intervallePrint = fréquence d'affichage (5 000 = 5 sec)
 
+           Ne pas choisir une fréquence trop rapide pour ne pas saturer l'affichage
+           et être au minimum à un centaine de fois le temps cycle moyen
+
 cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5.00 = 5 ms)
 
 cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10.00 = 10 ms)
