@@ -1,61 +1,45 @@
-# Arduino_TempsCycle
-Affichage du temps de cycle de la boucle LOOP
+# Arduino_TempsCycle 
+ Permet surveiller le temp de cycle sur la base des micro seconde  
+ hervé CHUTEAU pour le Bistromatik  
+ version 2.05 du 17/03/2026  
 
-pour surveiller le temp de cycle sur la base des micro seconde
-
-hervé CHUTEAU pour le Bistromatik
-
-version 0.5 du 06/08/2021
-
-Le temps de cycle pris par ce module, aussi bien à 9600 bauds qu'à 250000 bauds est de 0.12 ms environ
-
- occupation mémoire    RAM 218 bytes 2.7%     Flash 4928 bytes 1,9%
-
-Développé avec un MÉGA2560 REV3
-
-Développé sous Visual Studio Code  1.57.1 et PlatformIO Core 5.1.1 Home 3.3.4
-
-  
-Affichage typique 
-
-_ temps moyen
-
-_ temps max
-
-_ nombre de cycle avec un temps supérieur au seuil 1 (ici 5 ms)
-
-_ nombre de cycle avec un temps supérieur au seuil 2 (ici 10 ms)
-
-
-exemple "Temps de cycle en ms   moyen 4.02   max 4.03   >5.00 0   >10.00 0"
+ Affichage sur le Terminal :  
+ Temps de cycle (9999)  moyen 0.016 ms  max 0.125  >0.030 25  >>0.120 1  
  
-## Paramètrage ##
-
-cyc_intervallePrint = fréquence d'affichage (5 000 = 5 sec)
-
-           Ne pas choisir une fréquence trop rapide pour ne pas saturer l'affichage
-           et être au minimum à un centaine de fois le temps cycle moyen
-
-cyc_seuil1 = valeur en ms de la surveillance seuil 1 (5.00 = 5 ms)
-
-cyc_seuil2 = valeur en ms de la surveillance seuil 2 (10.00 = 10 ms)
-
-Dans la boucle Setup : xTempsCycleParam(5000.00,5.00,10.00); //temps en millisecondes
-
-
-## Lancement du programme ##
-
-Lancement du programme dans la boucle Loop xTempsCycle(sSerialPrint)
-
-la surveillance est lancée et le paramètre sSerialPrint à true imprime le résultat sur le terminal
-
+ Temps de cycle : Nom donné à l'instance  
+ (9999)         : nombre de tour de cycle (affichage limité à 9999)  
+ moyen 0.016 ms : temps moyen d'éxécution  
+ max 0.128      : temps max constaté  
+ \>0.030 25      : Le premier seuil de 0.030 ms a été dépassé 25 fois  
+                  (on ne comptabilise pas les dépassements de second seuil)  
+ \>>0.120 1      : le second seuil de 0.120 ms a été dépassé qu'une fois  
  
-## Variables disponibles ##
-
-cyc_CharLCD1[]   Première ligne de l'afficheur LCD  avec le temps moyen et le temsp max
-
-cyc_CharLCD2[]   Seconde ligne de l'afficheur LCD  avec le nombre de cycle supérieur aux seuils definis
-
-cyc_newLCD       Bool prévenant d'un nouvel affichage. Il est à reseter par l'utilisateur.
-
-exemple :  LCD1 "m  0.02  M  0.12"   LCD2 ">     0 >>     0"
+ Création de Class : yTempsCycle TempsCycle("Temps de cycle", 5, 0.03, 0.13);
+     "Temps de cycle" : Nom modifiable
+			5 :  Nombre de seconde entre deux affichage
+     0.030 : Seuil 1 en ms
+     0.120 : Seuil 2 en ms
+ 
+ Dans la boucle à surveiller : TempsCycle.loop(true);  
+ TempsCycle.newTxt : nouveau affichage formaté
+ TempsCycle.texte1 et TempsCycle.texte2 : affichage
+ 
+ Possibilité de mesurer le temps d'une partie de code en plaçant start stop  
+ TempsCycle.start();  
+     /.   votre code   ./
+ TempsCycle.stop();  
+ (On laisse TempsCycle.loop(); dans la boucle loop() pour la gestion de l'affichage)  
+ 
+ Pour limiter l'impact sur le temps de cycle la mise en forme est decomposée opération par opération le serial.print se fait 10 caractères par 10
+ caractères ce qui limite le temps max à 0,14ms (temps équivalent aux opérations les plus gourmantes de mise en forme)  
+ 
+ sur MEGA2560  avec monitor_speed = 115200  
+        Par rapport à un Mega affichant "Hello World"  
+        RAM: 182 bytes sur 8192 bytes (2,2%)  pour chaque instance  
+        Flash: 4924 bytes sur 253952 bytes (1,94%)  
+ 
+ Temps moyen d'éxécution 0.020ms  par instance  
+ Temps maximum 0.14ms (0.200ms si 3 instances)  
+ (seulement 25 tours de cycle > 0,030ms)  
+ 
+ Ce qui consomme du temps c'est dtostrf(sValeur, 1, sNbDeci, sp_conversionBuf); pour 112µs environ
